@@ -51,7 +51,7 @@ def adaptive_predictor(img, H, W) :
     return predicted, error
 
 
-def Uniform_Quantizer(Array, N_bits = 2) :
+""" def Uniform_Quantizer(Array, N_bits = 2) :  # not like lecture 
     levels = 2**N_bits
     array_min = np.min(Array)
     array_max = np.max(Array)
@@ -63,7 +63,7 @@ def Uniform_Quantizer(Array, N_bits = 2) :
     boundaries = array_min + np.arange(levels + 1) * step_size
     Q_bar = ((boundaries[:-1] + boundaries[1:]) / 2).astype(np.int32)
         
-    return indexs, Q_bar, step_size
+    return indexs, Q_bar, step_size """
 
 
 # just for showing images
@@ -94,7 +94,7 @@ def Compress() :
         else :
             print("# enter valid integer.")
     # Uniform quantizer
-    indexes, Q_bar, step_size = Uniform_Quantizer(error ,bits)
+    indexes, Q_bar = Uniform_Quantizer(error ,bits)
     
     # Compression ration
     original_bits = img_h * img_w * 8
@@ -121,17 +121,11 @@ def Compress() :
 
 
 
-
-def Uniform_DeQuantizer(indexes, q_bar) :
-    indexes_h, indexes_w = indexes.shape
-    dequantized = np.zeros((indexes_h, indexes_w), dtype=np.int32)
-    for i in range(0, indexes_h) :
-        for j in range(0, indexes_w) :
-            dequantized[i, j] = q_bar[indexes[i, j]]
-    return dequantized
+def Uniform_DeQuantizer(indexes, Q_bar):
+    return Q_bar[indexes]
 
 
-def Reconstruct_Image(dq, img_edges):   # not expected result.................
+def Reconstruct_Image(dq, img_edges):
     H, W = dq.shape
     rec = np.zeros((H, W), dtype=np.int32)
 
@@ -160,7 +154,7 @@ def DeCompress() :
     dq = Uniform_DeQuantizer(indexes, Q_bar)
     
     # reconstruction
-    rec = Reconstruct_Image(dq, edges)    # not expected result.................
+    rec = Reconstruct_Image(dq, edges)
 
     # show images
     show_images(
